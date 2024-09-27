@@ -1,0 +1,66 @@
+#include <iostream>
+#include <vector>
+#include <map>
+#include <cmath>
+#include <string>
+
+using namespace std;
+
+long long decode_value(const string& value, int base) {
+    long long result = 0;
+    for (char digit : value) {
+        result *= base;
+        if (digit >= '0' && digit <= '9') {
+            result += digit - '0';
+        } else {
+            result += digit - 'A' + 10;
+        }
+    }
+    return result;
+}
+
+
+double lagrangeInterpolation(const vector<pair<int, long long>>& points, int k) {
+    double result = 0.0;
+    for (int i = 0; i < k; ++i) {
+        double term = points[i].second;
+        for (int j = 0; j < k; ++j) {
+            if (i != j) {
+                term *= (0 - points[j].first) / (double)(points[i].first - points[j].first);
+            }
+        }
+        result += term;
+    }
+    return result;
+}
+
+int main() {
+    
+    map<int, pair<int, string>> data = {
+        {1, {10, "4"}},
+        {2, {2, "111"}},
+        {3, {10, "12"}},
+        {6, {4, "213"}}
+    };
+
+    int n = 4;  
+    int k = 3;  
+    
+    vector<pair<int, long long>> points;
+
+    
+    for (const auto& entry : data) {
+        int x = entry.first;
+        int base = entry.second.first;
+        string encoded_value = entry.second.second;
+        long long y = decode_value(encoded_value, base);
+        points.push_back({x, y});
+    }
+
+    
+    double constant_term = lagrangeInterpolation(points, k);
+    
+    cout << "The constant term (c) is: " << constant_term << endl;
+
+    return 0;
+}
